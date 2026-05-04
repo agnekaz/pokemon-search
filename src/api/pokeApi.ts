@@ -1,7 +1,7 @@
 const url = 'https://pokeapi.co/api/v2';
 
 export const fetchPokemon = async (name: string) => {
-    const response = await fetch(`${url}/pokemon/${name}`);
+    const response = await fetch(`${url}/pokemon/${name.toLocaleLowerCase()}`);
     if(!response.ok){
         throw new Error('Pokemon not found');
     }
