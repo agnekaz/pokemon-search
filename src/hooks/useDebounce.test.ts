@@ -1,9 +1,8 @@
 import '@testing-library/jest-dom';
-import { renderHook, act, cleanup } from  '@testing-library/react';
+import { renderHook, act } from  '@testing-library/react';
 import { useDebounce } from './useDebounce';
 
 afterEach(() => {
-    cleanup();
     jest.clearAllTimers();
     jest.useRealTimers();
     jest.restoreAllMocks();

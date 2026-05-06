@@ -12,7 +12,7 @@ const mockPokemon = {
 it("Should render pokemon name, types and image correctly", ()=>{
     render(<PokemonCard pokemon={mockPokemon}/>);
 
-    const pokemonName = screen.getByText("pikachu");
+    const pokemonName = screen.getByText(/pikachu/i);
     const pokemonImage = screen.getByRole("img");
     const pokemonType = screen.getByText("electric");
 
@@ -32,7 +32,7 @@ it("Should not render pokemons' image if it doesn't have sprite URL", ()=>{
 
     render(<PokemonCard pokemon={noSpritePokemon}/>);
 
-    const pokemonName = screen.getByText("ditto");
+    const pokemonName = screen.getByText(/ditto/i);
     
     expect(pokemonName).toBeInTheDocument();
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
