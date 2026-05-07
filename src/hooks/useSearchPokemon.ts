@@ -20,7 +20,8 @@ export const useSearchPokemon = (searchTerm: string) => {
                 const result = await fetchPokemon(searchTerm);
                 setPokemon(result);
             } catch (error){
-                setError("Pokemon not found");
+                const message = error instanceof Error ? error.message : "Something went wrong";
+                setError(message);
                 setPokemon(null);
             } finally{
                 setIsLoading(false);

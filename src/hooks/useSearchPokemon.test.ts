@@ -18,7 +18,12 @@ it("Should return null initially if searchTerm is empty", async()=>{
 });
 
 it("Should fetch pokemon correctly", async ()=>{
-    const mockPokemon = { name: "pikachu", id: 25 };
+    const mockPokemon = {
+        id: 25,
+        name: "pikachu",
+        sprites: { front_default: "https://example.com/pikachu.png" },
+        types: [{ type: { name: "electric" } }],
+    };
     mockedFetchPokemon.mockResolvedValueOnce(mockPokemon);
 
     const { result } = renderHook(() => useSearchPokemon("pikachu"));
@@ -33,7 +38,7 @@ it("Should fetch pokemon correctly", async ()=>{
 });
 
 it("Should handle error if pokemon is not found", async () => {
-    mockedFetchPokemon.mockRejectedValue(new Error("404"));
+    mockedFetchPokemon.mockRejectedValue(new Error("Pokemon not found"));
 
     const { result } = renderHook(() => useSearchPokemon("abcd"));
 
