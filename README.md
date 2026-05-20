@@ -1,14 +1,25 @@
-## Pokémon Search
+# Pokémon Search
 
-Small React + TypeScript app to search Pokémon by **name or ID** using the [PokeAPI](https://pokeapi.co/). The UI includes a search input, debounced requests, and a simple Pokémon card (sprite + types).
+A React + TypeScript app for browsing and filtering Pokémon from the public [PokeAPI](https://pokeapi.co/). Search by **name**, filter by **type**, look up a Pokémon by **numeric ID**, and scroll to load more results. Card details (sprites, types, colors) load lazily as cards enter the viewport.
 
-**Live app:** [https://pokemon-search-mu-peach.vercel.app/](https://pokemon-search-mu-peach.vercel.app/) (Vercel)
+**Live app:** [https://pokemon-search-mu-peach.vercel.app/](https://pokemon-search-mu-peach.vercel.app/)
+
+## Features
+
+- **Infinite scroll** — paginated list of Pokémon (`limit=20`) with automatic loading near the bottom of the page
+- **Lazy-loaded card details** — list items fetch full Pokémon data only when visible (`IntersectionObserver` + in-memory cache)
+- **Name filter** — debounced client-side filter on loaded names (`includes`)
+- **Type filter** — browse all Pokémon or load names for a selected type (e.g. Fire, Water)
+- **ID search** — typing only digits (e.g. `25`) fetches that Pokémon directly via the API
+- **Type-colored cards** — card background follows the Pokémon’s primary type
+- **Responsive layout** — single-column grid on mobile, multi-column on larger screens
+- **Custom headline** — “Pokemon Search” title using the Pokémon Solid font
 
 ## Tech stack
 
-- **React + TypeScript** (Create React App)
+- **React 19** and **TypeScript** ([Create React App](https://create-react-app.dev/) / `react-scripts` 5)
 - **Sass (SCSS)** for styling
-- **React Testing Library + Jest** for tests
+- **Jest** and **React Testing Library** for unit and component tests
 
 ## Getting started
 
@@ -18,34 +29,60 @@ Install dependencies:
 npm install
 ```
 
-Start the dev server:
+Start the development server:
 
 ```bash
 npm start
 ```
 
-Open `http://localhost:3000`.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-- **`npm start`**: run locally in dev mode
-- **`npm test`**: run tests (watch mode by default)
-- **`npm test -- --watchAll=false`**: run all tests once (CI-style)
-- **`npm run build`**: production build
+| Command | Description |
+| --- | --- |
+| `npm start` | Dev server with hot reload |
+| `npm test` | Tests in interactive watch mode (CRA default) |
+| `npm test -- --watchAll=false` | Run all tests once (useful for CI) |
+| `npm run build` | Production build into `build/` |
+| `npm run eject` | Eject from CRA (irreversible; rarely needed) |
 
-## Styling (SCSS)
+## How it works (high level)
 
-- Global styles live in `src/App.scss` and are imported in `src/App.tsx`.
-- TypeScript needs SCSS module declarations. This project includes them in `src/react-app-env.d.ts` (`declare module '*.scss'`).
+1. **Browse mode** — `useInfinitePokemon` loads pages of `{ name, url }` from `GET /pokemon?limit=&offset=`.
+2. **Lazy details** — each `PokemonListCard` calls `getPokemonDetail(name)` when it enters the viewport; results are cached in `pokemonDetailCache.ts`.
+3. **Filters** — `usePokemonBrowse` applies the name filter to the loaded list and switches between the global list and type-specific lists from `GET /type/{type}`.
+4. **ID search** — when the debounced input is numeric, `useSearchPokemon` calls `GET /pokemon/{id}` and shows a single card instead of the grid.
 
-## Project structure (high level)
+## Project structure
 
-- `src/components/`: UI components (`Input`, `PokemonCard`, `PokemonSearchPage`)
-- `src/hooks/`: reusable hooks (e.g. `useDebounce`, `useSearchPokemon`)
-- `src/api/`: PokeAPI client + mocks for tests
-- `src/types/`: TypeScript types (e.g. `Pokemon`)
+| Path | Role |
+| --- | --- |
+| `src/components/PokemonSearchPage.tsx` | Main page: filters, grid, ID search, infinite scroll |
+| `src/components/PokemonCard.tsx` | Pokémon card UI (name, types, artwork) |
+| `src/components/PokemonListCard.tsx` | Lazy-load wrapper around `PokemonCard` |
+| `src/components/TypeFilter.tsx` | Type dropdown |
+| `src/components/input.tsx` | Search / filter input |
+| `src/hooks/useInfinitePokemon.ts` | Paginated list state |
+| `src/hooks/useInfiniteScroll.ts` | Scroll sentinel (`IntersectionObserver`) |
+| `src/hooks/usePokemonBrowse.ts` | Name + type filtering and browse state |
+| `src/hooks/useSearchPokemon.ts` | Direct lookup by name or ID |
+| `src/hooks/useDebounce.ts` | Debounced input (default 500 ms) |
+| `src/api/pokeApi.ts` | PokeAPI client (`fetchPokemon`, `fetchPokemonList`, `fetchPokemonNamesByType`) |
+| `src/api/pokemonDetailCache.ts` | Detail cache and in-flight deduplication |
+| `src/utils/pokemonTypeColors.ts` | Type → color mapping for cards |
+| `src/types/pokemon.ts` | `Pokemon`, list response types |
+| `src/assets/fonts/PokemonSolid.ttf` | Custom headline font |
+| `src/App.scss` | Global and component styles |
 
-## Notes
+Tests live next to source files (e.g. `pokeApi.test.ts`, `PokemonSearchPage.test.tsx`).
 
-- Data source: [PokeAPI](https://pokeapi.co/)
-- If you run into stylesheet import type errors, ensure `sass` is installed and `src/react-app-env.d.ts` declares `*.scss`.
+## Styling
+
+- Global styles are in `src/App.scss` (imported from `App.tsx` and components).
+- SCSS module types are declared in `src/react-app-env.d.ts`.
+- Fonts bundled from `src/assets/fonts/` (required for Create React App to resolve `@font-face` URLs).
+
+## Data source
+
+Pokémon data is provided by [PokeAPI](https://pokeapi.co/). This project is a learning demo and is not affiliated with Nintendo, Game Freak, or The Pokémon Company.
