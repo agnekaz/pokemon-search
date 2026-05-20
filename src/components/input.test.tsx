@@ -7,7 +7,7 @@ import Input from "./input";
 it("Should have the correct input value and placeholder", () => {
   render(<Input value="pikachu" onChange={() => {}} />);
 
-  const inputElement = screen.getByPlaceholderText(/Type pokemon name or id/i);
+  const inputElement = screen.getByPlaceholderText(/Filter by name or search by id/i);
 
   expect(inputElement).toBeInTheDocument();
   expect(inputElement).toHaveValue("pikachu");

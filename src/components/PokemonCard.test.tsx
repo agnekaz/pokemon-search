@@ -14,7 +14,7 @@ it("Should render pokemon name, types and image correctly", ()=>{
 
     const pokemonName = screen.getByText(/pikachu/i);
     const pokemonImage = screen.getByRole("img");
-    const pokemonType = screen.getByText("electric");
+    const pokemonType = screen.getByText("Electric");
 
     expect(pokemonName).toBeInTheDocument();
     expect(pokemonImage).toHaveAttribute("src", mockPokemon.sprites.front_default);

@@ -14,7 +14,7 @@ function Input({value, onChange}:InputProps){
         type="text" 
         className="input-group__input" 
         id="pokemon-input"
-        placeholder='Type pokemon name or id'
+        placeholder='Filter by name or search by id…'
         value={value}
         onChange={onChange}
         ></input>
